@@ -45,7 +45,7 @@ export default {
           }
         }
         this.api = new JitsiMeetExternalAPI(VUE_APP_JITSI_DOMAIN_URL, options)
-        this.api.executeCommand('setVideoQuality', 480);
+        this.api.executeCommand('setVideoQuality', 360);
       })
     }).catch(err => {
       // Failed to fetch script
