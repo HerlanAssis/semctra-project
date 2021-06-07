@@ -203,6 +203,24 @@ export default {
       }
     }
 
+    const validatePasswordComplexity = (rule, value, callback) => {
+      const anUpperCase = /[A-Z]/
+      const aLowerCase = /[a-z]/
+      const aNumber = /[0-9]/
+
+      if (value.length < 8) {
+        callback(new Error('Deve ter 8 ou mais caracteres!'))
+      } else if (!anUpperCase.test(value)) {
+        callback(new Error('Deve ter um ou mais caracteres maiúsculos!'))
+      } else if (!aLowerCase.test(value)) {
+        callback(new Error('Deve ter um ou mais caracteres minúsculos!'))
+      } else if (!aNumber.test(value)) {
+        callback(new Error('Deve ter um ou mais caracteres numéricos!'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       activeProfile: 'sus_number',
       loginForm: {
@@ -272,6 +290,11 @@ export default {
             required: true,
             trigger: 'blur',
             message: 'Este campo não pode ser vazio'
+          },
+          {
+            required: true,
+            trigger: ['blur', 'change'],
+            validator: validatePasswordComplexity
           }
         ],
         password_confirmation: [
