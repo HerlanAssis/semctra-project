@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import VueTheMask from 'vue-the-mask'
 
 import Cookies from 'js-cookie'
 
@@ -39,6 +40,8 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   locale: ptbrLang // 如果使用中文，无需设置，请删除
 })
+
+Vue.use(VueTheMask)
 
 Vue.use(LoadScript)
 

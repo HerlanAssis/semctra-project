@@ -6,10 +6,10 @@
       :rules="loginRules"
       class="login-form"
       autocomplete="on"
-      label-position="left"
+      label-position="top"
     >
       <div class="title-container">
-        <h3 class="title">Login</h3>
+        <h3 class="title">Cadastro</h3>
       </div>
 
       <el-form-item prop="username">
@@ -22,9 +22,92 @@
           placeholder="Username"
           name="username"
           type="text"
-          tabindex="1"
           autocomplete="on"
         />
+      </el-form-item>
+
+      <el-form-item prop="email">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          ref="email"
+          v-model="loginForm.email"
+          placeholder="Email"
+          name="email"
+          type="text"
+          autocomplete="on"
+        />
+      </el-form-item>
+
+      <el-form-item prop="cpf">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          ref="cpf"
+          v-model="loginForm.cpf"
+          v-mask="'###.###.###-##'"
+          placeholder="CPF"
+          name="cpf"
+          type="text"
+          autocomplete="on"
+        />
+      </el-form-item>
+
+      <el-form-item prop="phone">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          ref="phone"
+          v-model="loginForm.phone"
+          v-mask="'#######-####'"
+          placeholder="Telefone"
+          name="phone"
+          type="text"
+          autocomplete="on"
+        />
+      </el-form-item>
+
+      <el-form-item prop="birthdate">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-date-picker
+          ref="birthdate"
+          v-model="loginForm.birthdate"
+          v-mask="'##/##/####'"
+          prefix-icon="null"
+          placeholder="Data de Nascimento"
+          name="birthdate"
+          format="dd/MM/yyyy"
+        />
+      </el-form-item>
+
+      <el-form-item label="Quem é você?" :prop="activeProfile">
+        <el-tabs v-model="activeProfile" style="color: #fff" stretch @tab-click="handleChangeProfile">
+          <el-tab-pane label="Paciente" name="sus_number">
+            <el-input
+              ref="patient"
+              v-model="loginForm.sus_number"
+              placeholder="Número do SUS"
+              name="sus_number"
+              type="text"
+              autocomplete="on"
+            />
+          </el-tab-pane>
+          <el-tab-pane label="Médico" name="crm">
+            <el-input
+              ref="patient"
+              v-model="loginForm.crm"
+              placeholder="Número do CRM"
+              name="crm"
+              type="text"
+              autocomplete="on"
+            />
+          </el-tab-pane>
+        </el-tabs>
       </el-form-item>
 
       <el-tooltip
@@ -42,8 +125,39 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="Senha"
             name="password"
+            tabindex="2"
+            autocomplete="on"
+            @keyup.native="checkCapslock"
+            @blur="capsTooltip = false"
+            @keyup.enter.native="handleLogin"
+          />
+          <span class="show-pwd" @click="showPwd">
+            <svg-icon
+              :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+            />
+          </span>
+        </el-form-item>
+      </el-tooltip>
+
+      <el-tooltip
+        v-model="capsTooltip"
+        content="Caps lock is On"
+        placement="right"
+        manual
+      >
+        <el-form-item prop="password_confirmation">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="confirm-password"
+            v-model="loginForm.password_confirmation"
+            :type="passwordType"
+            placeholder="Confirmar Senha"
+            name="confirm-password"
             tabindex="2"
             autocomplete="on"
             @keyup.native="checkCapslock"
@@ -61,8 +175,8 @@
       <div class="social-links">
         <el-button
           type="text"
-          @click="handleClickNewSignIn"
-        >Ainda não possui cadastro?</el-button>
+          @click="handleClickLogin"
+        >Já possui cadastro?</el-button>
         <el-button type="text">Esqueceu a senha?</el-button>
       </div>
 
@@ -70,48 +184,83 @@
         :loading="loading"
         type="primary"
         style="width:100%;margin-bottom:30px;"
-        @click.native.prevent="handleLogin"
-      >Login</el-button>
-
-      <!-- <div style="position:relative">
-        <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
-        </div>
-
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
-        </el-button>
-      </div> -->
+        @click.native.prevent="handleSignIn"
+      >Cadastrar</el-button>
     </el-form>
-    <!--
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business
-      simulation! ! !
-      <br />
-      <br />
-      <br />
-      <social-sign />
-    </el-dialog> -->
+
   </div>
 </template>
 
 <script>
-
 export default {
   name: 'Login',
   data() {
+    const validateConfirmPassword = (rule, value, callback) => {
+      if (value !== this.loginForm.password) {
+        callback(new Error('As senhas devem ser iguais!'))
+      } else {
+        callback()
+      }
+    }
+
     return {
+      activeProfile: 'sus_number',
       loginForm: {
         username: '',
-        password: ''
+        email: '',
+        cpf: '',
+        phone: '',
+        birthdate: '',
+        sus_number: '',
+        crm: '',
+        password: '',
+        password_confirmation: ''
       },
       loginRules: {
         username: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: 'Este campo não pode ser vazio'
+          }
+        ],
+        email: [
+          {
+            required: true,
+            trigger: 'blur',
+            type: 'email',
+            message: 'Este campo não pode ser vazio'
+          }
+        ],
+        cpf: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: 'Este campo não pode ser vazio'
+          }
+        ],
+        phone: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: 'Este campo não pode ser vazio'
+          }
+        ],
+        birthdate: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: 'Este campo não pode ser vazio'
+          }
+        ],
+        sus_number: [
+          {
+            required: true,
+            trigger: 'blur',
+            message: 'Este campo não pode ser vazio'
+          }
+        ],
+        crm: [
           {
             required: true,
             trigger: 'blur',
@@ -123,6 +272,13 @@ export default {
             required: true,
             trigger: 'blur',
             message: 'Este campo não pode ser vazio'
+          }
+        ],
+        password_confirmation: [
+          {
+            required: true,
+            trigger: ['blur', 'change'],
+            validator: validateConfirmPassword
           }
         ]
       },
@@ -174,12 +330,16 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
+    handleSignIn() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
+
+          const data = Object.fromEntries(Object.entries(this.loginForm).filter(([k, v]) => !!v))
+          data.birthdate = data.birthdate.toLocaleDateString()
+
           this.$store
-            .dispatch('user/login', this.loginForm)
+            .dispatch('user/register', data)
             .then(() => {
               this.$router.push({
                 path: this.redirect || '/',
@@ -204,29 +364,15 @@ export default {
         return acc
       }, {})
     },
-    handleClickNewSignIn() {
+    handleClickLogin() {
       this.$router.push({
-        path: 'sign-in'
+        name: 'login'
       })
+    },
+    handleChangeProfile() {
+      this.loginForm.crm = ''
+      this.loginForm.sus_number = ''
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   }
 }
 </script>
@@ -274,6 +420,16 @@ $cursor: #fff;
     background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
+
+    &__label {
+      color: #fff
+    }
+  }
+
+  .el-tabs {
+    &__item {
+      color: #fff
+    }
   }
 }
 </style>
@@ -293,7 +449,7 @@ $light_gray: #eee;
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    padding: 35px 35px 0;
     margin: 0 auto;
     overflow: hidden;
   }

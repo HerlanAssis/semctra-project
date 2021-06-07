@@ -8,6 +8,14 @@ export function login(data) {
   })
 }
 
+export function register(data) {
+  return request({
+    url: 'users/auth/register/',
+    method: 'post',
+    data
+  })
+}
+
 export function getInfo(token) {
   const config = {
     headers: { Authorization: token }
