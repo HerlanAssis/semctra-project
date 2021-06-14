@@ -1,5 +1,5 @@
 <template>
-  <div class="components-container">
+  <div class="app-container">
     <!-- <el-row>
       <el-col class="text-center" :span="24">
         <h1 styles="text-align: center;">Meet</h1>
@@ -45,7 +45,7 @@ export default {
           }
         }
         this.api = new JitsiMeetExternalAPI(VUE_APP_JITSI_DOMAIN_URL, options)
-        this.api.executeCommand('setVideoQuality', 360);
+        this.api.executeCommand('setVideoQuality', 360)
       })
     }).catch(err => {
       // Failed to fetch script

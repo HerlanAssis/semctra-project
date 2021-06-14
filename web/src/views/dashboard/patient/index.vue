@@ -1,32 +1,36 @@
 <template>
-  <div class="dashboard-editor-container">
-    <div class=" clearfix">
-      <pan-thumb :image="avatar" style="float: left">
-        Your roles:
-        <span v-for="item in roles" :key="item" class="pan-info-roles">{{ item }}</span>
-      </pan-thumb>
-      <div class="info-container">
-        <span class="display_name">{{ name }}</span>
-        <span style="font-size:20px;padding-top:20px;display:inline-block;">Editor's Dashboard</span>
-      </div>
-    </div>
-    <div>
-      <img :src="emptyGif" class="emptyGif">
-    </div>
+  <div class="app-container">
+    <el-row class="page-container">
+      <el-col style="margin: 10px 0 10px 0" class="text-center" :span="24">
+        <typography convention="main-title">
+          Atendimento
+        </typography>
+      </el-col>
+      <el-col class="card-avatar" :span="24">
+        <el-avatar :src="circleUrl" />
+      </el-col>
+      <el-col style="margin: 10px 0 10px 0" class="text-center" :span="24">
+        <el-button @click="requestMeet">
+          Solicitar Atendimetto
+        </el-button>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import PanThumb from '@/components/PanThumb'
-import GithubCorner from '@/components/GithubCorner'
+import Typography from '@/components/Typography'
+import * as Meets from '@/api/meet'
 
 export default {
-  name: 'DashboardEditor',
-  components: { PanThumb, GithubCorner },
+  name: 'DashboardPatient',
+  components: {
+    Typography
+  },
   data() {
     return {
-      emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3'
+      circleUrl: 'https://images.vexels.com/media/users/3/151709/isolated/preview/098c4aad185294e67a3f695b3e64a2ec-iacute-cone-de-avatar-do-m-eacute-dico-by-vexels.png'
     }
   },
   computed: {
@@ -35,39 +39,38 @@ export default {
       'avatar',
       'roles'
     ])
+  },
+  methods: {
+    async requestMeet() {
+      this.$loading({
+        lock: true,
+        text: 'Loading',
+        spinner: 'el-icon-loading'
+      })
+
+      this.$loading().close()
+
+      const { data } = await Meets.save()
+
+      console.log(data)
+
+      if (data.id) {
+        this.$router.push({ name: 'Meet', params: { id: data.id }})
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .emptyGif {
-    display: block;
-    width: 45%;
-    margin: 0 auto;
-  }
+.card-avatar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  .dashboard-editor-container {
-    background-color: #e3e3e3;
-    min-height: 100vh;
-    padding: 50px 60px 0px;
-    .pan-info-roles {
-      font-size: 12px;
-      font-weight: 700;
-      color: #333;
-      display: block;
-    }
-    .info-container {
-      position: relative;
-      margin-left: 190px;
-      height: 150px;
-      line-height: 200px;
-      .display_name {
-        font-size: 48px;
-        line-height: 48px;
-        color: #212121;
-        position: absolute;
-        top: 25px;
-      }
-    }
+  .el-avatar {
+    height: 300px;
+    width: 300px;
   }
+}
 </style>

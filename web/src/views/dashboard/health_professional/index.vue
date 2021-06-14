@@ -1,32 +1,75 @@
 <template>
-  <div class="dashboard-editor-container">
-    <div class=" clearfix">
-      <pan-thumb :image="avatar" style="float: left">
-        Your roles:
-        <span v-for="item in roles" :key="item" class="pan-info-roles">{{ item }}</span>
-      </pan-thumb>
-      <div class="info-container">
-        <span class="display_name">{{ name }}</span>
-        <span style="font-size:20px;padding-top:20px;display:inline-block;">Dashboard do profisional da saúde</span>
-      </div>
-    </div>
-    <div>
-      <img :src="emptyGif" class="emptyGif">
-    </div>
+  <div>
+    <panel-group @handleSetLineChartData="handleSetLineChartData" />
+
+    <el-row :gutter="0" class="page-container">
+      <el-col class="card-info card-avatar" :span="3">
+        <el-avatar size="small" :src="circleUrl" />
+      </el-col>
+
+      <el-col class="card-info patient-detail" :span="17">
+        <el-row>
+          <el-col :span="12">
+            <typography convention="small-title">
+              Nome: <typography convention="title">Maria Antônia da Silva</typography>
+            </typography>
+          </el-col>
+          <el-col :span="12">
+            <typography convention="small-title">
+              Idade: <typography convention="title">50 anos</typography>
+            </typography>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="24">
+            <typography convention="title">
+              Motivo do Atendimento:
+            </typography>
+          </el-col>
+          <el-col :span="24">
+            <typography>
+              Paciente diz sentir fortes dores na cabeça, tontoras e enjoos.
+            </typography>
+          </el-col>
+        </el-row>
+
+      </el-col>
+
+      <el-col class="card-info card-action" :span="4">
+        <div class="card-action-icon-wrapper icon-phone-call" @click="getNextMeet">
+          <svg-icon icon-class="phone-call" class-name="card-action-icon" />
+        </div>
+
+        <!-- TODO: modal com dados clíncos do paciente  -->
+        <div class="card-action-icon-wrapper icon-more">
+          <svg-icon icon-class="more" class-name="card-action-icon" />
+        </div>
+      </el-col>
+    </el-row>
   </div>
+
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import PanThumb from '@/components/PanThumb'
-import GithubCorner from '@/components/GithubCorner'
+import PanelGroup from '../components/PanelGroup'
+import Typography from '@/components/Typography'
+import * as Meets from '@/api/meet'
 
 export default {
-  name: 'DashboardEditor',
-  components: { PanThumb, GithubCorner },
+  name: 'DashboarHealthProfessional',
+  components: {
+    Typography,
+    PanelGroup
+  },
   data() {
     return {
-      emptyGif: 'https://wpimg.wallstcn.com/0e03b7da-db9e-4819-ba10-9016ddfdaed3'
+      circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+      meets: {
+        loading: false,
+        list: []
+      }
     }
   },
   computed: {
@@ -34,40 +77,106 @@ export default {
       'name',
       'avatar',
       'roles'
-    ])
+    ]),
+    loading() {
+      return this.meets.loading
+    }
+  },
+  watch: {
+    loading(newVal) {
+      if (newVal) {
+        this.$loading({
+          lock: true,
+          text: 'Loading',
+          spinner: 'el-icon-loading'
+        })
+      } else {
+        this.$loading().close()
+      }
+    }
+  },
+  methods: {
+    handleSetLineChartData(type) {
+      // this.lineChartData = lineChartData[type]
+    },
+    async getNextMeet() {
+      const { data } = await Meets.accept({ scheduled_to: new Date().toLocaleString() })
+      if (data.id) {
+        this.$router.push({ name: 'Meet', params: { id: data.id }})
+      }
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-  .emptyGif {
-    display: block;
-    width: 45%;
-    margin: 0 auto;
+
+.card-info {
+  height: 100px;
+}
+
+.card-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .el-avatar {
+    height: 90px;
+    width: 90px;
+  }
+}
+
+.card-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px !important;
+
+  .icon-phone-call {
+    color: #40c9c6;
+
+    &:hover {
+      cursor: pointer;
+      color: white;
+      background: #40c9c6;
+    }
   }
 
-  .dashboard-editor-container {
-    background-color: #e3e3e3;
-    min-height: 100vh;
-    padding: 50px 60px 0px;
-    .pan-info-roles {
-      font-size: 12px;
-      font-weight: 700;
-      color: #333;
-      display: block;
+  .icon-more {
+    color: #36a3f7;
+
+    &:hover {
+      cursor: pointer;
+      color: white;
+      background: #36a3f7;
     }
-    .info-container {
-      position: relative;
-      margin-left: 190px;
-      height: 150px;
-      line-height: 200px;
-      .display_name {
-        font-size: 48px;
-        line-height: 48px;
-        color: #212121;
-        position: absolute;
-        top: 25px;
-      }
-    }
+
+    transform: rotate(90deg);
   }
+
+  .card-action-icon-wrapper {
+    float: left;
+    margin: 14px 0 0 14px;
+    padding: 16px;
+    transition: all 0.38s ease-out;
+    border-radius: 40px;
+  }
+
+  .card-action-icon {
+    float: left;
+    font-size: 48px;
+  }
+
+}
+
+.patient-detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0 0 10px 10px !important;
+
+  border: 1px solid #DFE6EC;
+  border-top: 0;
+  border-bottom: 0;
+}
 </style>
