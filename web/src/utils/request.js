@@ -30,14 +30,27 @@ service.interceptors.request.use(
 )
 
 // response interceptor
-service.interceptors.response.use(null, error => {
-  console.error('err' + error) // for debug
-  Message({
-    message: error.message,
-    type: 'error',
-    duration: 5 * 1000
+service.interceptors.response.use(
+  response => {
+    const res = response
+    if (res?.data?.detail) {
+      Message({
+        message: res?.data?.detail,
+        type: 'success',
+        duration: 5 * 1000
+      })
+    }
+
+    return res
+  },
+  error => {
+    console.error('err' + error) // for debug
+    Message({
+      message: error.message,
+      type: 'error',
+      duration: 5 * 1000
+    })
+    return Promise.reject(error)
   })
-  return Promise.reject(error)
-})
 
 export default service
