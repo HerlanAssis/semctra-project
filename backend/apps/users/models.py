@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
 from django.dispatch import receiver
+from apps.schedule.models import Schedule
 from ..core.models import BaseModel
 from .enum import RolesEnum
 
@@ -50,6 +51,12 @@ class PatientProfile(BaseProfile):
 
 class DoctorProfile(BaseProfile):
     crm = models.CharField(_('CRM'), max_length=128)
+    
+    schedule = models.OneToOneField(
+        to=Schedule,
+        verbose_name=_('Agenda'),
+        on_delete=models.CASCADE,        
+    )
 
     class Meta:
         verbose_name = _('Médico')
