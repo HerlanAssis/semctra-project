@@ -104,19 +104,19 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
-  {
-    path: '/atendimentos',
-    component: Layout,
-    redirect: '/atendimentos/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/atendimento/index'),
-        name: 'Atendimentos',
-        meta: { title: 'Atendimentos', icon: 'el-icon-s-help' }
-      }
-    ]
-  },
+  // {
+  //   path: '/atendimentos',
+  //   component: Layout,
+  //   redirect: '/atendimentos/index',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/atendimento/index'),
+  //       name: 'Atendimentos',
+  //       meta: { title: 'Atendimentos', icon: 'el-icon-s-help' }
+  //     }
+  //   ]
+  // },
 
   {
     path: '/meet',
