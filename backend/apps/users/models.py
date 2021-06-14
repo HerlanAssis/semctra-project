@@ -55,7 +55,9 @@ class DoctorProfile(BaseProfile):
     schedule = models.OneToOneField(
         to=Schedule,
         verbose_name=_('Agenda'),
-        on_delete=models.CASCADE,        
+        on_delete=models.CASCADE,  
+        blank=True,
+        null=True      
     )
 
     class Meta:
