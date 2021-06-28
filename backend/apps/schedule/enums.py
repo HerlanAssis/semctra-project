@@ -8,7 +8,7 @@ class DaysEnum(Enum):
     TUESDAY = ('TUESDAY', _('Terça-Feira'))
     WEDNESDAY = ('WEDNESDAY', _('Quarta-Feira'))
     THURSDAY = ('THURSDAY', _('Quinta-Feira'))
-    FRIDAY = ('FRIDAY', _('Seixta-Feira'))
+    FRIDAY = ('FRIDAY', _('Sexta-Feira'))
     SATURDAY = ('SATURDAY', _('Sábado'))
 
     @classmethod

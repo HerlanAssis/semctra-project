@@ -23,4 +23,5 @@ urlpatterns = [
 
     path('api/users/', include('apps.users.api.urls')),
     path('api/telehealth/', include('apps.telehealth.api.urls')),
+    path('api/schedule/', include('apps.schedule.api.urls')),
 ]

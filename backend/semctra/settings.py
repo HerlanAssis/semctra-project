@@ -49,7 +49,7 @@ EXTERNAL_APPS = [
 MY_APPS = [
     'apps.core',
     'apps.users.apps.UsersConfig',
-    'apps.telehealth',
+    'apps.telehealth.apps.TelehealthConfig',
     'apps.schedule'
 ]
 

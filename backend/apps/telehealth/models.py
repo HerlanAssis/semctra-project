@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.db.models import UniqueConstraint
 from apps.core.models import BaseModel
-from apps.telehealth.enums import StatusEnum
+from apps.telehealth.enums import StatusEnum, StatusMeetEnum
 from apps.core.utils import create_hash
 
 
@@ -24,8 +24,7 @@ class Meet(BaseModel):
     )
     scheduled_to = models.DateTimeField(
         _("Agendado para"),
-        blank=True,
-        null=True,
+        auto_now_add=True
     )
     link = models.URLField(
         _("Link"),
@@ -33,9 +32,9 @@ class Meet(BaseModel):
         null=True,
     )
     status = models.CharField(
-        choices=StatusEnum.choices(),
+        choices=StatusMeetEnum.choices(),
         max_length=32,
-        default=StatusEnum.PROCESSING.value[0]
+        default=StatusMeetEnum.STARTED.value[0]
     )
     pin = models.CharField(
         _("Pin"),
@@ -55,3 +54,29 @@ class Meet(BaseModel):
 
     def __str__(self):
         return "Agendado para: {}".format(self.scheduled_to)
+
+
+class Queue(BaseModel):
+    requested_in = models.DateTimeField(
+        verbose_name=_('Solicitado em: '),
+        auto_now_add=True
+    )
+    requester = models.ForeignKey(
+        to=get_user_model(),
+        verbose_name=_('Solicitante'),
+        on_delete=models.CASCADE,
+        related_name='queue',
+    )
+    status = models.CharField(
+        choices=StatusEnum.choices(),
+        max_length=32,
+        default=StatusEnum.PROCESSING.value[0]
+    )
+
+    class Meta:
+        verbose_name = _("Fila")
+        verbose_name_plural = _("Fila")
+        ordering = ['requested_in']
+
+    def __str__(self):
+        return "Solicitado em: {}".format(self.requested_in)

@@ -3,8 +3,7 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register(r'meet', views.MeetViewSet, basename='Meet')
-router.register(r'queue', views.QueueViewSet, basename='Queue')
+router.register(r'event', views.EventViewSet, basename='Event')
 
 # The API URLs are now determined automatically by the router.
 urlpatterns = [

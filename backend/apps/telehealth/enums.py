@@ -11,3 +11,12 @@ class StatusEnum(Enum):
     @classmethod
     def choices(cls):
         return tuple((i.value[0], i.value[1]) for i in cls)
+
+
+class StatusMeetEnum(Enum):
+    STARTED = ('STARTED', _('Iniciada'))
+    CLOSED = ('CLOSED', _('Encerrada'))
+
+    @classmethod
+    def choices(cls):
+        return tuple((i.value[0], i.value[1]) for i in cls)

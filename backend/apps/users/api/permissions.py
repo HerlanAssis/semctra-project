@@ -30,4 +30,4 @@ def checkIfUserIsAPatient(patient):
 
 def checkIfUserIsAHealthProfessional(health_professional):
     user_roles = [role.id for role in health_professional.roles.all()]
-    return RolesEnum.HEALTH_PROFESSIONAL[0].value in user_roles
+    return RolesEnum.HEALTH_PROFESSIONAL.value[0] in user_roles
