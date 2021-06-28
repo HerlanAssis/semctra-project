@@ -80,11 +80,23 @@ class QueueViewSet(viewsets.ModelViewSet):
     API endpoint that allows member to be viewed or edited.
     """
     serializer_class = QueueSerializer
-    permission_classes = [IsAuthenticated, IsPatient]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        return Queue.objects.filter(Q(requester=user))
+        return Queue.objects.filter(Q(status=StatusEnum.PROCESSING.value[0]))
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action == 'update' or self.action == 'partial_update':
+            permission_classes = [IsPatient, IsUpdaterOrReject, ]
+        elif self.action == 'create':
+            permission_classes = [IsPatient, ]
+        else:
+            permission_classes = [IsOwnerOrReject]
+        return [permission() for permission in permission_classes]
 
     def create(self, request):
         already_queued = Queue.objects.filter(Q(requester=request.user) & Q(

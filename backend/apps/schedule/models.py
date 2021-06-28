@@ -20,12 +20,11 @@ class Event(models.Model):
         max_length=32,
         default=DaysEnum.MONDAY.value[0]
     )
-
-    start_time = models.DateTimeField(
-        verbose_name=_('Data e hora de início')
+    start_time = models.TimeField(
+        verbose_name=_('Hora de início')
     )
-    end_time = models.DateTimeField(
-        verbose_name=_('Data e hora de fim')
+    end_time = models.TimeField(
+        verbose_name=_('Hora de fim')
     )
 
     class Meta:
