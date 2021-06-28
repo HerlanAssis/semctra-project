@@ -27,7 +27,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'user'
+      'user',
+      'roles'
     ])
   },
   mounted() {
@@ -58,6 +59,16 @@ export default {
       this.api?.executeCommand('hangup')
       document.querySelector('#mural').removeChild(this.api.getIFrame())
     })
+
+    if (this.roles.includes('HEALTH_PROFESSIONAL')) {
+      Meets.finish().then(() => {
+        this.$notify({
+          title: 'Meet finalizado',
+          message: 'Reunião encerrada com sucesso!',
+          type: 'success'
+        })
+      })
+    }
   },
   methods: {
 

@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-const baseUrl = 'telehealth/meet'
+const baseUrl = 'telehealth/queue'
 
 export function get(data) {
   return request({
@@ -13,14 +13,6 @@ export function getList() {
   return request({
     url: `${baseUrl}/`,
     method: 'get'
-  })
-}
-
-export function finish(data) {
-  return request({
-    url: `${baseUrl}/finish/`,
-    method: 'post',
-    data
   })
 }
 

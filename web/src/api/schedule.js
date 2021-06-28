@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-const baseUrl = 'telehealth/meet'
+const baseUrl = 'schedule/event'
 
 export function get(data) {
   return request({
@@ -16,11 +16,10 @@ export function getList() {
   })
 }
 
-export function finish(data) {
+export function getDays() {
   return request({
-    url: `${baseUrl}/finish/`,
-    method: 'post',
-    data
+    url: `${baseUrl}/week-day-options`,
+    method: 'get'
   })
 }
 

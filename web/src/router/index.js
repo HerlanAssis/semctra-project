@@ -78,7 +78,12 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: {
+          title: 'Dashboard',
+          icon: 'dashboard',
+          affix: true,
+          noCache: true
+        }
       }
     ]
   },
@@ -117,6 +122,20 @@ export const asyncRoutes = [
   //     }
   //   ]
   // },
+
+  {
+    path: '/cronograma',
+    component: Layout,
+    redirect: '/cronograma/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/cronograma/index'),
+        name: 'Cronograma',
+        meta: { title: 'Cronograma', icon: 'el-icon-date', roles: ['HEALTH_PROFESSIONAL'] }
+      }
+    ]
+  },
 
   {
     path: '/meet',

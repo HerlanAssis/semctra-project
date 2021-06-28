@@ -11,7 +11,7 @@
         <el-row>
           <el-col :span="12">
             <typography convention="small-title">
-              Nome: <typography convention="title">Maria Antônia da Silva</typography>
+              Nome: <typography convention="title">{{ getNextPatient.username }}</typography>
             </typography>
           </el-col>
           <el-col :span="12">
@@ -47,6 +47,34 @@
         </div>
       </el-col>
     </el-row>
+
+    <el-row>
+      <el-table
+        v-loading="queue.loading"
+        :data="getQueueList"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%;"
+      >
+
+        <el-table-column min-width="220px" align="center" label="Fila">
+          <template slot-scope="{row}">
+            <span>
+              {{ row.requester.username }}
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column fixed="right" min-width="45px" align="center" label="Ações">
+          <template slot-scope="{row}">
+            <el-button type="primary" size="mini" icon="el-icon-paper" @onClick="handeDetail(row)">
+              Detalhes
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-row>
   </div>
 
 </template>
@@ -56,6 +84,7 @@ import { mapGetters } from 'vuex'
 import PanelGroup from '../components/PanelGroup'
 import Typography from '@/components/Typography'
 import * as Meets from '@/api/meet'
+import * as Queue from '@/api/queue'
 
 export default {
   name: 'DashboarHealthProfessional',
@@ -69,8 +98,15 @@ export default {
       meets: {
         loading: false,
         list: []
+      },
+      queue: {
+        loading: false,
+        list: []
       }
     }
+  },
+  created() {
+    this.getQueueData()
   },
   computed: {
     ...mapGetters([
@@ -80,6 +116,20 @@ export default {
     ]),
     loading() {
       return this.meets.loading
+    },
+    getNextPatient() {
+      let patient = false
+
+      if (this.queue.list.length > 0) patient = this.queue.list[0]?.requester
+
+      return patient
+    },
+    getQueueList() {
+      let queueList = []
+
+      if (this.queue.list.length > 0) queueList = this.queue.list.slice(1)
+
+      return queueList
     }
   },
   watch: {
@@ -96,14 +146,25 @@ export default {
     }
   },
   methods: {
+    getQueueData() {
+      this.queue.loading = true
+      Queue.getList().then(response => {
+        this.queue.list = response.data
+      }).finally(() => {
+        this.queue.loading = false
+      })
+    },
     handleSetLineChartData(type) {
       // this.lineChartData = lineChartData[type]
     },
     async getNextMeet() {
-      const { data } = await Meets.accept({ scheduled_to: new Date().toLocaleString() })
+      const { data } = await Meets.save()
       if (data.id) {
         this.$router.push({ name: 'Meet', params: { id: data.id }})
       }
+    },
+    handeDetail() {
+
     }
   }
 }

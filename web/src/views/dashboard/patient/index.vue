@@ -15,13 +15,50 @@
         </el-button>
       </el-col>
     </el-row>
+
+    <el-row>
+      <el-table
+        v-loading="meet.loading"
+        :data="meet.list"
+        border
+        fit
+        highlight-current-row
+        style="width: 100%;"
+      >
+
+        <el-table-column min-width="220px" align="center" label="Médico">
+          <template slot-scope="{row}">
+            <span>
+              {{ row.host.username }}
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column min-width="220px" align="center" label="Status">
+          <template slot-scope="{row}">
+            <span>
+              {{ row.status }}
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column fixed="right" min-width="90px" align="center" label="Ações">
+          <template slot-scope="{row}">
+            <el-button :disabled="!row.token" type="success" size="mini" icon="el-icon-video-camera" @click="handleBeginMeet(row)">
+              Chamada de Vídeo
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-row>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import Typography from '@/components/Typography'
-import * as Meets from '@/api/meet'
+import * as Queue from '@/api/queue'
+import * as Meet from '@/api/meet'
 
 export default {
   name: 'DashboardPatient',
@@ -30,8 +67,15 @@ export default {
   },
   data() {
     return {
-      circleUrl: 'https://images.vexels.com/media/users/3/151709/isolated/preview/098c4aad185294e67a3f695b3e64a2ec-iacute-cone-de-avatar-do-m-eacute-dico-by-vexels.png'
+      circleUrl: 'https://images.vexels.com/media/users/3/151709/isolated/preview/098c4aad185294e67a3f695b3e64a2ec-iacute-cone-de-avatar-do-m-eacute-dico-by-vexels.png',
+      meet: {
+        list: [],
+        loading: false
+      }
     }
+  },
+  created() {
+    this.getMeetList()
   },
   computed: {
     ...mapGetters([
@@ -50,13 +94,18 @@ export default {
 
       this.$loading().close()
 
-      const { data } = await Meets.save()
+      await Queue.save()
 
-      console.log(data)
-
-      if (data.id) {
-        this.$router.push({ name: 'Meet', params: { id: data.id }})
-      }
+      // if (data.id) {
+      //   this.$router.push({ name: 'Meet', params: { id: data.id }})
+      // }
+    },
+    async getMeetList() {
+      const { data } = await Meet.getList()
+      this.meet.list = data
+    },
+    handleBeginMeet(row) {
+      this.$router.push({ name: 'Meet', params: { id: row.id }})
     }
   }
 }
