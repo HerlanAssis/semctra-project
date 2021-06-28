@@ -76,6 +76,8 @@ const actions = {
             reject('Verification failed, please Login again.')
           }
 
+          // remap roles array
+          data.roles = data.roles.map(role => role.id);
           const { roles, first_name, email, introduction } = data
 
           // roles must be a non-empty array
@@ -83,9 +85,10 @@ const actions = {
             reject('getInfo: roles must be a non-null array!')
           }
 
+
           commit(
             'SET_ROLES',
-            roles.map(role => role.id)
+            roles
           )
           commit('SET_NAME', first_name)
           commit('SET_EMAIL', email)

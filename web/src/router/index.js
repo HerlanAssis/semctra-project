@@ -132,7 +132,11 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/cronograma/index'),
         name: 'Cronograma',
-        meta: { title: 'Cronograma', icon: 'el-icon-date', roles: ['HEALTH_PROFESSIONAL'] }
+        meta: {
+          title: 'Cronograma',
+          icon: 'el-icon-date',
+          roles: ['HEALTH_PROFESSIONAL']
+        }
       }
     ]
   },
