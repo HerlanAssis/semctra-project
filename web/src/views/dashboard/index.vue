@@ -1,6 +1,8 @@
 <template>
   <div class="app-container">
-    <component :is="currentRole" />
+    <div class="dashboard-container">
+      <component :is="currentRole" />
+    </div>
   </div>
 </template>
 
@@ -29,3 +31,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .dashboard-container {
+    margin-bottom: 32px;
+    flex: 1;
+  }
+</style>

@@ -137,6 +137,28 @@ export const asyncRoutes = [
           icon: 'el-icon-date',
           roles: ['HEALTH_PROFESSIONAL']
         }
+      },
+      {
+        path: 'cadastrar',
+        hidden: true,
+        component: () => import('@/views/cronograma/Form'),
+        name: 'CadastrarCronograma',
+        meta: {
+          title: 'Cadastrar Cronograma',
+          breadcrumb: true,
+          noCache: true
+        }
+      },
+      {
+        path: 'editar/:id(\\d+)',
+        hidden: true,
+        component: () => import('@/views/cronograma/Form'),
+        name: 'EditarCronograma',
+        meta: {
+          title: 'Editar Cronograma',
+          breadcrumb: true,
+          noCache: true
+        }
       }
     ]
   },
