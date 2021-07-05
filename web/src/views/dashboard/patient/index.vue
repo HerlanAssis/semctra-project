@@ -71,6 +71,17 @@
           </template>
         </el-table-column>
 
+        <el-table-column min-width="280px" align="center" label="Posição">
+          <template slot-scope="{row}">
+            <span v-if="row.position===0">
+              FIQUE ATENTO, VOCÊ SERÁ O PRÓXIMO A SER ATENDIDO
+            </span>
+            <span v-else>
+              {{ row.position }}
+            </span>
+          </template>
+        </el-table-column>
+
         <el-table-column fixed="right" min-width="90px" align="center" label="Ações">
           <template slot-scope="{row}">
             <el-popconfirm
@@ -150,6 +161,9 @@ import Typography from '@/components/Typography'
 import * as Queue from '@/api/queue'
 import * as Meet from '@/api/meet'
 import { NotificationMixin } from '../mixin'
+
+// TODO refatorar listas em dois componentes.
+// TODO paginar listas
 
 export default {
   name: 'DashboardPatient',
