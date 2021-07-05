@@ -2,7 +2,7 @@
   <div>
     <panel-group @handleSetLineChartData="handleSetLineChartData" />
 
-    <el-row :gutter="0" class="page-container">
+    <el-row v-if="getNextPatient" :gutter="0" class="page-container">
       <el-col class="card-info card-avatar" :span="3">
         <el-avatar size="small" :src="circleUrl" />
       </el-col>
@@ -85,6 +85,7 @@ import PanelGroup from '../components/PanelGroup'
 import Typography from '@/components/Typography'
 import * as Meets from '@/api/meet'
 import * as Queue from '@/api/queue'
+import { NotificationMixin } from '../mixin'
 
 export default {
   name: 'DashboarHealthProfessional',
@@ -92,6 +93,7 @@ export default {
     Typography,
     PanelGroup
   },
+  mixins: [NotificationMixin],
   data() {
     return {
       circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
@@ -105,15 +107,15 @@ export default {
       }
     }
   },
-  created() {
-    this.getQueueData()
-  },
   computed: {
     ...mapGetters([
       'name',
       'avatar',
       'roles'
     ]),
+    dataList() {
+      return this.queue.list
+    },
     loading() {
       return this.meets.loading
     },
@@ -145,7 +147,13 @@ export default {
       }
     }
   },
+  created() {
+    this.checkScheduleMessage()
+  },
   methods: {
+    getData() {
+      this.getQueueData()
+    },
     getQueueData() {
       this.queue.loading = true
       Queue.getList().then(response => {
@@ -165,6 +173,31 @@ export default {
     },
     handeDetail() {
 
+    },
+    checkScheduleMessage() {
+      this.$confirm('Seu cronograma de atendimento está atualizado?', 'Verificação de Cronograma', {
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não',
+        type: 'warning'
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: 'Ótimo, sempre mantenha o seu cronograma atualizado :D'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Entendido, poderia atualizá-lo agora?'
+        })
+        this.$router.push({ name: 'Cronograma' })
+      })
+    },
+    showPushNotification() {
+      this.$notify({
+        title: 'Fila de atendimentos',
+        message: 'A fila de atendimento foi atualizada!',
+        type: 'info'
+      })
     }
   }
 }

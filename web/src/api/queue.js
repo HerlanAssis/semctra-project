@@ -29,3 +29,10 @@ export function save(data) {
       data
     })
 }
+
+export function remove(data) {
+  return request({
+    url: `${baseUrl}/${data.id}/`,
+    method: 'delete'
+  })
+}

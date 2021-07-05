@@ -58,13 +58,13 @@ export default {
     Typography
   },
   data() {
-    const dateNow = new Date()
-    const dateNowMore1Hour = new Date()
-    dateNowMore1Hour.setHours(dateNowMore1Hour.getHours() + 1)
+    // const dateNow = new Date()
+    // const dateNowMore1Hour = new Date()
+    // dateNowMore1Hour.setHours(dateNowMore1Hour.getHours() + 1)
 
     return {
       form: {
-        range: [dateNow, dateNowMore1Hour],
+        range: null,
         week: ''
       },
       week: {
@@ -156,7 +156,9 @@ export default {
               message: 'Dados salvos com sucesso',
               type: 'success'
             })
-          }).finally(() => loading.close())
+          })
+            .then(() => this.onClean())
+            .finally(() => loading.close())
         }
       })
     }

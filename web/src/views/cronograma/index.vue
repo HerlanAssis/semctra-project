@@ -36,8 +36,8 @@
 
       <el-row>
         <el-table
-          v-loading="loadings.schedule"
-          :data="lists.schedule"
+          v-loading="schedule.loading"
+          :data="schedule.list"
           border
           fit
           highlight-current-row
@@ -46,7 +46,7 @@
           <el-table-column min-width="120px" align="center" label="Dia">
             <template slot-scope="{row}">
               <span>
-                {{ lists.days[row.week_day] }}
+                {{ days.list[row.week_day] }}
               </span>
             </template>
           </el-table-column>
@@ -61,17 +61,20 @@
 
           <el-table-column fixed="right" min-width="120px" align="center" label="Ações">
             <template slot-scope="{row}">
-              <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)" />
 
-              <!-- <el-popconfirm
+              <el-button class="table-actions-item" type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)" />
+
+              <el-popconfirm
+                class="table-actions-item"
                 title="Tem certeza disso?"
                 confirm-button-text="Confirmar"
                 cancel-button-text="Cancelar"
                 icon="el-icon-info"
                 icon-color="red"
+                @onConfirm="handleDelete(row)"
               >
-              </el-popconfirm> -->
-              <el-button type="danger" size="mini" icon="el-icon-delete" @click="handleDelete(row)" />
+                <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" />
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -107,13 +110,13 @@ export default {
           scheduled_to: undefined
         }
       },
-      lists: {
-        schedule: [],
-        days: {}
+      schedule: {
+        list: [],
+        loading: false
       },
-      loadings: {
-        schedule: false,
-        days: false
+      days: {
+        list: [],
+        loading: false
       },
       listQuery: {
         pesquisa: '',
@@ -128,10 +131,10 @@ export default {
   },
   computed: {
     totalAccepted() {
-      return this.lists.schedule.length
+      return this.schedule.list.length
     },
     totalPending() {
-      return this.lists.schedule.length
+      return this.schedule.list.length
     }
   },
   created() {
@@ -140,19 +143,19 @@ export default {
   },
   methods: {
     getList() {
-      this.loadings.schedule = true
+      this.schedule.loading = true
       Schedule.getList().then(response => {
-        this.lists.schedule = response.data
+        this.schedule.list = response.data
       }).finally(() => {
-        this.loadings.schedule = false
+        this.schedule.loading = false
       })
     },
     getDaysList() {
-      this.loadings.days = true
+      this.days.loading = true
       Schedule.getDays().then(response => {
-        this.lists.days = response.data
+        this.days.list = response.data
       }).finally(() => {
-        this.loadings.days = false
+        this.days.loading = false
       })
     },
     handleCreate() {
@@ -182,3 +185,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.table-actions-item + .table-actions-item {
+    margin-left: 10px;
+}
+</style>

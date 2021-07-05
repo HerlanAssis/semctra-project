@@ -6,7 +6,7 @@
       </el-col>
     </el-row> -->
 
-    <div id="mural" style="height: 75vh;" />
+    <div id="mural" class="page-container" style="height: 75vh;" />
 
   </div>
 </template>
