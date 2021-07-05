@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import status
 
-from apps.users.api.permissions import IsHealth_Professional, IsPatient
+from apps.users.api.permissions import IsHealth_Professional, IsPatient, checkIfUserIsAHealthProfessional
 from ..models import Meet, Queue
 from ..enums import StatusEnum, StatusMeetEnum
 from .serializers import MeetSerializer, QueueSerializer
@@ -84,7 +84,10 @@ class QueueViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Queue.objects.filter(Q(status=StatusEnum.PROCESSING.value[0]))
+        if checkIfUserIsAHealthProfessional(user):
+            return Queue.objects.filter(Q(status=StatusEnum.PROCESSING.value[0]))
+
+        return Queue.objects.filter(Q(requester=user))
 
     def get_permissions(self):
         """
