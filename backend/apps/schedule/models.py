@@ -32,4 +32,4 @@ class Event(models.Model):
         verbose_name_plural = _("Eventos")
 
     def __str__(self):
-        return "Início: {} | Fim: {}".format(self.start_time, self.end_time)
+        return "{} - Início: {} | Fim: {}".format(self.week_day, self.start_time, self.end_time)

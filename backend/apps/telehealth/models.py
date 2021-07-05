@@ -57,9 +57,16 @@ class Meet(BaseModel):
 
 
 class Queue(BaseModel):
+    # Quando foi solicitado
     requested_in = models.DateTimeField(
         verbose_name=_('Solicitado em: '),
         auto_now_add=True
+    )
+    # Quando foi aceito p/ um meet
+    closed_in = models.DateTimeField(
+        verbose_name=_('Atendido em: '),
+        blank=True,
+        null=True
     )
     requester = models.ForeignKey(
         to=get_user_model(),
@@ -72,6 +79,14 @@ class Queue(BaseModel):
         max_length=32,
         default=StatusEnum.PROCESSING.value[0]
     )
+
+    # @property
+    # def position(self):
+    #     return list(Queue.objects.filter(status=StatusEnum.PROCESSING.value[0])).index(self)
+
+    # @property
+    # def average_waiting_time(self):
+    #     return Queue.objects.filter(status=StatusEnum.ACCEPTED.value[0]).aggregate(average_difference=Avg(F('requested_in') - F('closed_in')))
 
     class Meta:
         verbose_name = _("Fila")

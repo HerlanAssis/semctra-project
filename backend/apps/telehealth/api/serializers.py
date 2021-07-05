@@ -1,8 +1,9 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField, CharField
-from django.contrib.auth import get_user_model
 import os
 import jwt
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, CharField
+from django.contrib.auth import get_user_model
 from ..models import Meet, Queue
+from ..enums import StatusEnum
 
 
 User = get_user_model()
@@ -17,12 +18,20 @@ class UserSerializer(ModelSerializer):
 class QueueSerializer(ModelSerializer):
     requester = UserSerializer(required=False, many=False)
     status = CharField(required=False, source='get_status_display')
+    position = SerializerMethodField()
+    # average_waiting_time = SerializerMethodField()
 
     class Meta:
         model = Queue
         fields = (
-            'id', 'requester', 'status'
+            'id', 'requester', 'status', 'position',
         )
+
+    def get_position(self, obj):
+        return list(Queue.objects.filter(status=StatusEnum.PROCESSING.value[0])).index(obj)
+
+    # def get_average_waiting_time(self, obj):
+    #     return Queue.objects.filter(status=StatusEnum.ACCEPTED.value[0]).aggregate(average_difference=Avg(F('requested_in') - F('closed_in')))
 
 
 class MeetSerializer(ModelSerializer):
